@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Juan Daniel Palomino — Portafolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --cream: #f5f0e8;
+      --warm-white: #faf7f2;
+      --brown-dark: #2c1f14;
+      --brown-mid: #6b4c33;
+      --brown-light: #c4a882;
+      --brown-accent: #a07850;
+      --ink: #1a1208;
+      --grain-opacity: 0.035;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--cream);
+      color: var(--brown-dark);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      overflow-x: hidden;
+      cursor: default;
+    }
+
+    /* Grain texture overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+      opacity: var(--grain-opacity);
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.4rem 3rem;
+      background: rgba(245, 240, 232, 0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(160, 120, 80, 0.15);
+    }
+
+    nav .logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      font-weight: 300;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--brown-mid);
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 2.5rem;
+    }
+
+    nav ul a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--brown-mid);
+      transition: color 0.3s;
+    }
+
+    nav ul a:hover { color: var(--brown-accent); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 3rem 5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 70% 40%, rgba(196, 168, 130, 0.18) 0%, transparent 70%),
+                  radial-gradient(ellipse 50% 50% at 20% 80%, rgba(160, 120, 80, 0.1) 0%, transparent 60%);
+    }
+
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--brown-accent);
+      margin-bottom: 1.2rem;
+      opacity: 0;
+      animation: fadeUp 1s ease 0.3s forwards;
+    }
+
+    .hero h1 {
+      font-size: clamp(3.5rem, 9vw, 8rem);
+      font-weight: 300;
+      line-height: 0.92;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin-bottom: 2rem;
+      opacity: 0;
+      animation: fadeUp 1s ease 0.5s forwards;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--brown-accent);
+    }
+
+    .hero-sub {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--brown-mid);
+      max-width: 480px;
+      line-height: 1.6;
+      opacity: 0;
+      animation: fadeUp 1s ease 0.7s forwards;
+    }
+
+    .hero-year {
+      position: absolute;
+      top: 50%;
+      right: 3rem;
+      transform: translateY(-50%) rotate(90deg);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.4em;
+      color: var(--brown-light);
+      text-transform: uppercase;
+    }
+
+    .scroll-indicator {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0;
+      animation: fadeIn 1s ease 1.2s forwards;
+    }
+
+    .scroll-indicator span {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.3em;
+      color: var(--brown-light);
+      text-transform: uppercase;
+    }
+
+    .scroll-line {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--brown-light), transparent);
+      animation: scrollPulse 2s ease infinite;
+    }
+
+    /* ── SECTION BASE ── */
+    section { padding: 7rem 3rem; }
+
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--brown-accent);
+      margin-bottom: 3rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .section-label::after {
+      content: '';
+      display: block;
+      height: 1px;
+      width: 60px;
+      background: var(--brown-light);
+    }
+
+    /* ── STATEMENT ── */
+    .statement {
+      background: var(--warm-white);
+      border-left: 2px solid var(--brown-accent);
+      padding: 7rem 3rem 7rem 5rem;
+      position: relative;
+    }
+
+    .statement blockquote {
+      font-size: clamp(1.6rem, 3.5vw, 2.8rem);
+      font-weight: 300;
+      font-style: italic;
+      line-height: 1.45;
+      color: var(--ink);
+      max-width: 820px;
+      margin-bottom: 2.5rem;
+    }
+
+    .statement cite {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--brown-mid);
+      font-style: normal;
+    }
+
+    /* ── GALLERY ── */
+    #proyecto { background: var(--cream); }
+
+    .gallery-title {
+      font-size: clamp(2rem, 5vw, 4rem);
+      font-weight: 300;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+      line-height: 1.1;
+    }
+
+    .gallery-title em { font-style: italic; color: var(--brown-accent); }
+
+    .gallery-subtitle {
+      font-size: 1.05rem;
+      color: var(--brown-mid);
+      font-weight: 300;
+      margin-bottom: 4rem;
+      max-width: 500px;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      grid-auto-rows: 220px;
+      gap: 12px;
+    }
+
+    .gallery-item {
+      overflow: hidden;
+      position: relative;
+      background: var(--brown-light);
+      cursor: zoom-in;
+    }
+
+    .gallery-item:nth-child(1)  { grid-column: 1 / 8;  grid-row: 1 / 3; }
+    .gallery-item:nth-child(2)  { grid-column: 8 / 13; grid-row: 1 / 2; }
+    .gallery-item:nth-child(3)  { grid-column: 8 / 13; grid-row: 2 / 3; }
+    .gallery-item:nth-child(4)  { grid-column: 1 / 5;  grid-row: 3 / 4; }
+    .gallery-item:nth-child(5)  { grid-column: 5 / 9;  grid-row: 3 / 5; }
+    .gallery-item:nth-child(6)  { grid-column: 9 / 13; grid-row: 3 / 4; }
+    .gallery-item:nth-child(7)  { grid-column: 1 / 5;  grid-row: 4 / 5; }
+    .gallery-item:nth-child(8)  { grid-column: 9 / 13; grid-row: 4 / 5; }
+    .gallery-item:nth-child(9)  { grid-column: 1 / 6;  grid-row: 5 / 6; }
+    .gallery-item:nth-child(10) { grid-column: 6 / 13; grid-row: 5 / 6; }
+    .gallery-item:nth-child(11) { grid-column: 1 / 7;  grid-row: 6 / 7; }
+    .gallery-item:nth-child(12) { grid-column: 7 / 13; grid-row: 6 / 7; }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                  filter 0.5s ease;
+      filter: sepia(8%) saturate(90%);
+    }
+
+    .gallery-item:hover img {
+      transform: scale(1.04);
+      filter: sepia(0%) saturate(100%);
+    }
+
+    .gallery-item .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(44, 31, 20, 0);
+      transition: background 0.4s;
+      display: flex;
+      align-items: flex-end;
+      padding: 1rem;
+    }
+
+    .gallery-item:hover .overlay {
+      background: rgba(44, 31, 20, 0.25);
+    }
+
+    .gallery-item .num {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      color: rgba(255,255,255,0);
+      letter-spacing: 0.2em;
+      transition: color 0.4s;
+    }
+
+    .gallery-item:hover .num { color: rgba(255,255,255,0.7); }
+
+    /* placeholder when no image loaded */
+    .gallery-item .placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #d4c4a8, #c4a882);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      color: rgba(44,31,20,0.4);
+      letter-spacing: 0.2em;
+    }
+
+    /* ── PORTAFOLIO ── */
+    #portafolio {
+      background: var(--warm-white);
+    }
+
+    .port-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 3rem;
+    }
+
+    .port-item {
+      aspect-ratio: 4/5;
+      overflow: hidden;
+      position: relative;
+      background: var(--brown-light);
+      cursor: zoom-in;
+    }
+
+    .port-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease, filter 0.5s;
+      filter: sepia(5%) saturate(90%);
+    }
+
+    .port-item:hover img {
+      transform: scale(1.05);
+      filter: sepia(0%) saturate(105%);
+    }
+
+    .port-item .placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #ddd0b8, #c8b090);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      color: rgba(44,31,20,0.35);
+      letter-spacing: 0.2em;
+    }
+
+    /* ── ABOUT ── */
+    #sobre-mi {
+      background: var(--cream);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+    }
+
+    .about-photo {
+      aspect-ratio: 3/4;
+      overflow: hidden;
+      background: var(--brown-light);
+      position: relative;
+    }
+
+    .about-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: sepia(10%) saturate(85%);
+    }
+
+    .about-photo .placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(160deg, #d4c4a8, #b89870);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: rgba(44,31,20,0.4);
+      letter-spacing: 0.2em;
+      text-align: center;
+    }
+
+    .about-text .name-large {
+      font-size: clamp(2.2rem, 4vw, 3.5rem);
+      font-weight: 300;
+      line-height: 1;
+      margin-bottom: 0.3rem;
+      color: var(--ink);
+    }
+
+    .about-text .name-large em {
+      font-style: italic;
+      color: var(--brown-accent);
+    }
+
+    .about-text .tagline {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--brown-light);
+      margin-bottom: 2.5rem;
+    }
+
+    .about-text p {
+      font-size: 1.1rem;
+      font-weight: 300;
+      line-height: 1.75;
+      color: var(--brown-mid);
+      margin-bottom: 1.2rem;
+    }
+
+    .about-divider {
+      width: 40px;
+      height: 1px;
+      background: var(--brown-accent);
+      margin: 2rem 0;
+    }
+
+    /* ── LIGHTBOX ── */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9000;
+      background: rgba(26, 18, 8, 0.95);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .lightbox.open { display: flex; }
+
+    .lightbox img {
+      max-width: 90vw;
+      max-height: 90vh;
+      object-fit: contain;
+      filter: sepia(5%);
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 2rem;
+      right: 2rem;
+      background: none;
+      border: 1px solid rgba(196,168,130,0.4);
+      color: var(--brown-light);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.3s;
+    }
+
+    .lightbox-close:hover {
+      background: rgba(196,168,130,0.1);
+      color: var(--cream);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 3rem;
+      border-top: 1px solid rgba(160,120,80,0.2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    footer span {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--brown-light);
+      text-transform: uppercase;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; } to { opacity: 1; }
+    }
+
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.4; transform: scaleY(1); }
+      50%       { opacity: 1;   transform: scaleY(1.1); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      nav ul { gap: 1.5rem; }
+      .hero { padding: 0 1.5rem 4rem; }
+      section { padding: 5rem 1.5rem; }
+      .statement { padding: 4rem 1.5rem; border-left: none; border-top: 2px solid var(--brown-accent); }
+
+      .gallery-grid {
+        grid-template-columns: 1fr 1fr;
+        grid-auto-rows: 180px;
+      }
+      .gallery-item { grid-column: auto !important; grid-row: auto !important; }
+      .gallery-item:nth-child(1) { grid-column: 1 / 3 !important; }
+
+      .port-grid { grid-template-columns: repeat(2, 1fr); }
+
+      #sobre-mi {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+        padding: 5rem 1.5rem;
+      }
+
+      footer { flex-direction: column; gap: 1rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">J. D. Palomino</div>
+  <ul>
+    <li><a href="#proyecto">Proyecto</a></li>
+    <li><a href="#portafolio">Portafolio</a></li>
+    <li><a href="#sobre-mi">Sobre mí</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <p class="hero-eyebrow">Portafolio fotográfico — 2025</p>
+  <h1>Juan Daniel<br /><em>Palomino</em></h1>
+  <p class="hero-sub">Un recorrido visual por el aprendizaje, la mirada y la cotidianidad.</p>
+  <span class="hero-year">Fotografía · 2025</span>
+  <div class="scroll-indicator">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- STATEMENT -->
+<div class="statement reveal">
+  <p class="section-label">Statement</p>
+  <blockquote>
+    "Este semestre no solo aprendí a usar una cámara. Aprendí a mirar. A detenerme. A encontrar en lo ordinario algo que vale la pena guardar. Estas imágenes son el registro de ese cambio: el proceso de quien descubrió que la fotografía no es capturar el mundo, sino aprender a verlo de otra manera."
+  </blockquote>
+  <cite>— Juan Daniel Palomino, 2025</cite>
+</div>
+
+<!-- PROYECTO AUTORAL -->
+<section id="proyecto">
+  <p class="section-label reveal">Proyecto autoral</p>
+  <h2 class="gallery-title reveal">La <em>mirada</em> aprendida</h2>
+  <p class="gallery-subtitle reveal">10–12 fotografías del semestre — coherencia visual, proceso, cotidianidad.</p>
+
+  <div class="gallery-grid reveal">
+    <!-- Cambia foto1.jpg, foto2.jpg... por los nombres reales de tus archivos -->
+    <div class="gallery-item" onclick="openLightbox('fotos/foto1.jpg')">
+      <img src="fotos/foto1.jpg" alt="Fotografía 1" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="placeholder" style="display:none">01</div>
+      <div class="overlay"><span class="num">01</span></div>
+    </div>
+    <div class="gallery-item" onclick="openLightbox('fotos/foto2.jpg')">
+      <img src="fotos/foto2.jpg" alt="Fotografía 2" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="placeholder" style="display:none">02</div>
+      <div class="overlay"><span class="num">02</span></div>
+    </div>
+    <div class="gallery-item" onclick="openLightbox('fotos/foto3.jpg')">
+      <img src="fotos/foto3.jpg" alt="Fotografía 3" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="placeholder" style="display:none">03</div>
+      <div class="overlay"><span class="num">03</span></div>
+    </div>
+    <div class="gallery-item" onclick="openLightbox('fotos/foto4.jpg')">
+      <img src="fotos/foto4.jpg" alt="Fotografía 4" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="placeholder" style="display:none">04</div>
+      <div class="overlay"><span class="num">04</span></div>
+    </div>
+    <div class="gallery-item" onclick="openLightbox('fotos/foto5.jpg')">
+      <img src="fotos/foto5.jpg" alt="Fotografía 5" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="placeholder" style="display:none">05</div>
+      <div class="overlay"><span class="num">05</span></div>
+    </div>
+    <div class="gallery-item" onclick="openLightbox('fotos/foto6.jpg')">
+      <img src="fotos/foto6.jpg" alt="Fotografía 6" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="placeholder" style="display:none">06</div>
+      <div class="overlay"><span class="num">06</span></div>
+    </div>
+    <div class="gallery-item" onclick="openLightbox('fotos/foto7.jpg')">
+      <img src="fotos/foto7.jpg" alt="Fotografía 7" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="placeholder" style="display:none">07</div>
+      <div class="overlay"><span class="num">07</span></div>
+    </div>
+    <div class="gallery-item" onclick="openLightbox('fotos/foto8.jpg')">
+      <img src="fotos/foto8.jpg" alt="Fotografía 8" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="placeholder" style="display:none">08</div>
+      <div class="overlay"><span class="num">08</span></div>
+    </div>
+    <div class="gallery-item" onclick="openLightbox('fotos/foto9.jpg')">
+      <img src="fotos/foto9.jpg" alt="Fotografía 9" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="placeholder" style="display:none">09</div>
+      <div class="overlay"><span class="num">09</span></div>
+    </div>
+    <div class="gallery-item" onclick="openLightbox('fotos/foto10.jpg')">
+      <img src="fotos/foto10.jpg" alt="Fotografía 10" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="placeholder" style="display:none">10</div>
+      <div class="overlay"><span class="num">10</span></div>
+    </div>
+    <div class="gallery-item" onclick="openLightbox('fotos/foto11.jpg')">
+      <img src="fotos/foto11.jpg" alt="Fotografía 11" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="placeholder" style="display:none">11</div>
+      <div class="overlay"><span class="num">11</span></div>
+    </div>
+    <div class="gallery-item" onclick="openLightbox('fotos/foto12.jpg')">
+      <img src="fotos/foto12.jpg" alt="Fotografía 12" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="placeholder" style="display:none">12</div>
+      <div class="overlay"><span class="num">12</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- PORTAFOLIO -->
+<section id="portafolio">
+  <p class="section-label reveal">Portafolio semestral</p>
+  <h2 class="gallery-title reveal">Primer y <em>segundo</em> corte</h2>
+  <p class="gallery-subtitle reveal" style="margin-bottom:0">Trabajos entregados a lo largo del semestre.</p>
+
+  <div class="port-grid reveal">
+    <!-- Agrega aquí las fotos de tus cortes anteriores: port1.jpg, port2.jpg... -->
+    <div class="port-item" onclick="openLightbox('fotos/port1.jpg')">
+      <img src="fotos/port1.jpg" alt="Portafolio 1" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="placeholder" style="display:none">Foto portafolio</div>
+    </div>
+    <div class="port-item" onclick="openLightbox('fotos/port2.jpg')">
+      <img src="fotos/port2.jpg" alt="Portafolio 2" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="placeholder" style="display:none">Foto portafolio</div>
+    </div>
+    <div class="port-item" onclick="openLightbox('fotos/port3.jpg')">
+      <img src="fotos/port3.jpg" alt="Portafolio 3" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="placeholder" style="display:none">Foto portafolio</div>
+    </div>
+    <div class="port-item" onclick="openLightbox('fotos/port4.jpg')">
+      <img src="fotos/port4.jpg" alt="Portafolio 4" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="placeholder" style="display:none">Foto portafolio</div>
+    </div>
+    <div class="port-item" onclick="openLightbox('fotos/port5.jpg')">
+      <img src="fotos/port5.jpg" alt="Portafolio 5" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="placeholder" style="display:none">Foto portafolio</div>
+    </div>
+    <div class="port-item" onclick="openLightbox('fotos/port6.jpg')">
+      <img src="fotos/port6.jpg" alt="Portafolio 6" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="placeholder" style="display:none">Foto portafolio</div>
+    </div>
+  </div>
+</section>
+
+<!-- SOBRE MÍ -->
+<section id="sobre-mi">
+  <div class="about-photo reveal">
+    <img src="fotos/autorretrato.jpg" alt="Juan Daniel Palomino" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div class="placeholder" style="display:none">Autorretrato<br/>autorretrato.jpg</div>
+  </div>
+  <div class="about-text reveal">
+    <p class="tagline">Estudiante · Fotógrafo en formación</p>
+    <h2 class="name-large">Juan Daniel<br /><em>Palomino</em></h2>
+    <div class="about-divider"></div>
+    <!-- EDITA AQUÍ tu autobiografía -->
+    <p>
+      Soy Juan Daniel Palomino, estudiante de fotografía que este semestre descubrió algo más que técnica detrás de una cámara: aprendió a mirar diferente.
+    </p>
+    <p>
+      Lo que comenzó como una materia se convirtió en una forma de relacionarme con el mundo. Cada foto de este portafolio carga una pregunta, un momento, una mirada que antes se me escapaba.
+    </p>
+    <p>
+      Este portafolio es el registro de ese proceso: imperfecto, honesto y completamente mío.
+    </p>
+  </div>
+</section>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">Cerrar ✕</button>
+  <img id="lightbox-img" src="" alt="Foto ampliada" />
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span>© 2025 Juan Daniel Palomino</span>
+  <span>Portafolio fotográfico — Tercer corte</span>
+</footer>
+
+<script>
+  // Lightbox
+  function openLightbox(src) {
+    const lb = document.getElementById('lightbox');
+    const img = document.getElementById('lightbox-img');
+    img.src = src;
+    lb.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+  // Reveal on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
